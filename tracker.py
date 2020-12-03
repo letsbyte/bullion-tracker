@@ -1,5 +1,8 @@
 import requests
 import json
+from datetime import datetime
+
+from database import Database
 
 METAL = "XAG"
 CURRENCY = "USD"
@@ -31,6 +34,15 @@ if __name__ == "__main__":
     t = Tracker()
     metals = ["XAU", "XAG"]
     currency = "USD"
+    
+    db = Database("prices.db")
+    
     for metal in metals:
+        metal_obj = db.create_metal(metal)
         price = t.get_price(metal, currency)
+        price_obj = db.create_price(
+            price=price,
+            created_at=datetime.now(),
+            metal=metal_obj.id,
+        )
         print(f"Price of {metal} is {currency} {price}")
