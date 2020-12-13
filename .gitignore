@@ -130,3 +130,6 @@ dmypy.json
 
 # Database files
 *.db
+
+# Ignore generated image files
+images/
