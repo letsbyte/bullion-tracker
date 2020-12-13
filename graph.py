@@ -1,5 +1,8 @@
 import os
 from collections import defaultdict
+from datetime import datetime
+
+from database import Database
 
 import plotly.graph_objects as go
 
@@ -26,7 +29,7 @@ class Graph:
         
         return friendly_text
         
-    def render(self, export=False):
+    def render(self, title_date, export=False):
         friendly_text = self._gen_friendly_text()
         
         fig = go.Figure()
@@ -59,8 +62,12 @@ class Graph:
             )
         )
 
+        title = (
+            'Change in Gold/Silver Prices for '
+            f'{title_date}'
+        )   
         fig.update_layout(
-            title='Change in Gold/Silver Prices',
+            title=title,
             xaxis_title='Date',
             yaxis_title='USD',
         )
@@ -75,9 +82,27 @@ class Graph:
 
 
 if __name__ == "__main__":
-    x = ["Jan", "Feb", "Mar", "Apr"]
-    y_gold = [12.10, 13.45, 11.20, 9.25]
-    y_silver = [2.10, 3.45, 1.20, 2.25]
+    x = []
+    y_gold = []
+    y_silver = []
+    title_date = datetime.now().strftime('%d %b %Y')
     
+    d = Database("prices.db")
+    prices = d.get_prices()
+    
+    for price in prices:
+        date_str = price.created_at.strftime(
+            '%H:%M:%S'
+        )
+        if not date_str in x:
+            x.append(date_str)
+        
+        price_str = "{:.2f}".format(price.price)
+        if price.metal.name == "XAU":
+            y_gold.append(price_str)
+        else:
+            y_silver.append(price_str)
+        
+   
     g = Graph(x, y_gold, y_silver)
-    g.render(export=True)
+    g.render(title_date, export=True)
