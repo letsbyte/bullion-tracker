@@ -38,11 +38,10 @@ if __name__ == "__main__":
     db = Database("prices.db")
     
     for metal in metals:
-        metal_obj = db.create_metal(metal)
         price = t.get_price(metal, currency)
         price_obj = db.create_price(
             price=price,
             created_at=datetime.now(),
-            metal=metal_obj.id,
+            metal=metal,
         )
         print(f"Price of {metal} is {currency} {price}")
