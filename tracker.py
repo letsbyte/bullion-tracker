@@ -36,12 +36,13 @@ if __name__ == "__main__":
     currency = "USD"
     
     db = Database("prices.db")
+    created_at = datetime.now()
     
     for metal in metals:
         price = t.get_price(metal, currency)
         price_obj = db.create_price(
             price=price,
-            created_at=datetime.now(),
+            created_at=created_at,
             metal=metal,
         )
         print(f"Price of {metal} is {currency} {price}")
